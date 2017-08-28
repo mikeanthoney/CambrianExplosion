@@ -1,0 +1,7 @@
+# depslib dependency file v1.0
+1503890267 source:c:\users\michael\documents\c++\cambrianexplosion\main.cpp
+	<iostream>
+	<string>
+	<cstdlib>
+	<ctime>
+
