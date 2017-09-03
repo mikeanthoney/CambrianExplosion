@@ -22,6 +22,11 @@ private:
     int biteSize;
     int generationNumber;
     int parentOrganism;
+    int iterationBorn;  // new
+    int iterationDied;  // new
+    int lifeSpan;       // new
+    int numberOffspring;// new
+
 
 public:
     Organism()
@@ -52,11 +57,22 @@ public:
     bool getStatusAlive();
     void setParentOrganism(int);
     int getParentOrganism();
+    void setIterationBorn(int);
+    int getIterationBorn();
 
 protected:
 
 };
 
+void Organism::setIterationBorn(int iteration)
+{
+    iterationBorn = iteration;
+};
+
+int Organism::getIterationBorn()
+{
+    return iterationBorn;
+};
 
 void Organism::setEnergyStore(int energy)
 {
@@ -175,7 +191,7 @@ int main()
     int iRandom;
     srand(time(0));
     int iterationCounter = 0;
-    int maxIterations = 100;
+    int maxIterations = 165;
     int populationVsIteration[maxIterations];
     int environmentEnergy = 500;
     int externalEnergy = 500;
@@ -183,11 +199,14 @@ int main()
     int runningPopulation = 1;
     int maxPopulation = 10000;
     ofstream populationHistory;
+    ofstream populationRecord;
     populationHistory.open ("history.csv");
+    populationRecord.open ("record.csv");
     Organism population[maxPopulation];
     cout << "Welcome to the Cambrian world!" << endl;
     population[0].setStatusAlive(true);
     population[0].setDNA("ACGTCGAATCTAGGGA\n");
+    population[0].setIterationBorn(0);
     population[0].setGenerationNumber(1);
     population[0].setParentOrganism(0);
     population[0].setEnergyCapacity(8);
@@ -244,6 +263,7 @@ int main()
                         population[organismCounter].setEnergyStore(population[organismCounter].getEnergyStore() - 3);
                         //cout<<"Organism "<<organismCounter<<" reproduced!\n";
                         population[populationLevel].setStatusAlive(true);
+                        population[populationLevel].setIterationBorn(iterationCounter);
                         population[populationLevel].setDNA("ACGTCGAATCTAGGGA\n");
                         population[populationLevel].setGenerationNumber(population[organismCounter].getGenerationNumber()+ 1);
                         population[populationLevel].setParentOrganism(organismCounter);
@@ -264,13 +284,14 @@ int main()
         iterationCounter++;
     }
 
+    populationRecord<<"Organism, Iteration Born, Generation, Parent Organism, Alive at End\n";
     for(i = 0; i < populationLevel; i++)
     {
         if(population[i].getStatusAlive())
         {
-            std::cout<<"Organism "<<i<<": "<<"Generation: "<<population[i].getGenerationNumber()<<" Parent Organism: "<<population[i].getParentOrganism()<<" Alive: "<<population[i].getStatusAlive()<<"\n";
             livingCount++;
         }
+        populationRecord<<i<<","<<population[i].getIterationBorn()<<","<<population[i].getGenerationNumber()<<","<<population[i].getParentOrganism()<<","<<population[i].getStatusAlive()<<"\n";
     }
     std::cout<<"Living: "<<livingCount;
 
