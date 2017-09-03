@@ -22,22 +22,21 @@ private:
     int biteSize;
     int generationNumber;
     int parentOrganism;
-    int iterationBorn;  // new
-    int iterationDied;  // new
-    int lifeSpan;       // new
+    int iterationBorn;
+    int iterationDied;
+    int lifeSpan;
     int numberOffspring;// new
 
 
 public:
-    Organism()
+    Organism(std::string dna="XXXXXXXXXXXXXXXX", bool status=false, int stored=4, int capacity=8, int waste=0,
+             int bSize=2, int gNumber=1, int parent=0, int born=0, int died=0, int span=0,int brood=0):
+        organismDNA(dna), statusAlive(status), energyStore(stored), energyCapacity(capacity), energyWaste(waste),
+        biteSize(bSize), generationNumber(gNumber), parentOrganism(parent), iterationBorn(born), iterationDied(died),
+        lifeSpan(span), numberOffspring(brood)
     {
 
     }
-    ~Organism()
-    {
-        //std::cout<<organismDNA;
-        // when organism dies - release it's materials and energy back into the environment at its current location
-    };
 
     void Reproduce(); // Make copies of itself every time it has sufficient resources
     int Excrete(); // Take in resources from environment to power and build DNA
@@ -59,9 +58,39 @@ public:
     int getParentOrganism();
     void setIterationBorn(int);
     int getIterationBorn();
+    void setIterationDied(int);
+    int getIterationDied();
+    int getLifeSpan();
+    void incrementNumberOffspring();
+    int getNumberOffspring();
 
 protected:
 
+};
+
+void Organism::incrementNumberOffspring()
+{
+    numberOffspring++;
+}
+
+int Organism::getNumberOffspring()
+{
+    return numberOffspring;
+}
+
+int Organism::getLifeSpan()
+{
+    return iterationDied - iterationBorn;
+};
+
+void Organism::setIterationDied(int iteration)
+{
+    iterationDied = iteration;
+};
+
+int Organism::getIterationDied()
+{
+    return iterationDied;
 };
 
 void Organism::setIterationBorn(int iteration)
@@ -206,20 +235,16 @@ int main()
     cout << "Welcome to the Cambrian world!" << endl;
     population[0].setStatusAlive(true);
     population[0].setDNA("ACGTCGAATCTAGGGA\n");
-    population[0].setIterationBorn(0);
-    population[0].setGenerationNumber(1);
-    population[0].setParentOrganism(0);
-    population[0].setEnergyCapacity(8);
-    population[0].setEnergyStore(4);
-    population[0].setBiteSize(2);
+    population[0].setIterationDied(maxIterations);
     cout<<environmentEnergy<<"\n";
 
     while(iterationCounter < maxIterations)
     {
         environmentEnergy += externalEnergy;
-
         for(organismCounter = 0; organismCounter < populationLevel; organismCounter++)
         {
+            /*RANDOM DEATH PHASE*/
+            /*If the organism is killed during the Random Death Phase, skip the Life Cycle Phase*/
             if(population[organismCounter].getStatusAlive())
             {
 
@@ -227,74 +252,77 @@ int main()
                 if(iRandom < 10)
                 {
                     population[organismCounter].setStatusAlive(false); //organism died due to random event
+                    population[organismCounter].setIterationDied(iterationCounter);
                     runningPopulation--;
                 }
             }
 
+            /*LIFE CYCLE PHASE*/
+            /*If the organism in the population array is not alive, skip the Life Cycle Phase*/
             if(population[organismCounter].getStatusAlive())
             {
+                /*METABOLISM PHASE*/
+                /*The organism will first metabolize energy to search for food and mates*/
                 population[organismCounter].Metabolize();
+
+                /*If organisms energy store has reaches zero during the metabolism phase, it dies*/
                 if(population[organismCounter].getEnergyStore() == 0)
                 {
-                        population[organismCounter].setStatusAlive(false);
+                        population[organismCounter].setStatusAlive(false); // organism starved to death
+                        population[organismCounter].setIterationDied(iterationCounter);
                         runningPopulation--;
                         environmentEnergy = environmentEnergy + 5; // organism's body becomes energy
                 }
 
+                /*CONSUMPTION PHASE*/
+                /*If environment energy is zero - skip consumption phase (not possible to eat, yet)*/
                 if (environmentEnergy > 0)
                 {
                     environmentEnergy = environmentEnergy - population[organismCounter].Bite(environmentEnergy);
                     environmentEnergy = environmentEnergy + population[organismCounter].Excrete();
-                    //cout<<"Organism "<<organismCounter<<" took a bite!\n";
-                }
-                else
-                {
-                    //cout<<"Energy deficiency in environment!\n";
                 }
 
-                //cout<<environmentEnergy<<"\n";
-
+                /*REPRODUCTION PHASE*/
+                /*If population limit has been reached - skip reproduction phase (not possible to reproduce)*/
                 if (populationLevel < maxPopulation)
                 {
+                    /*If organism has enough energy, the organism reproduces*/
                     if(population[organismCounter].getEnergyStore() == population[organismCounter].getEnergyCapacity())
                     {
-                        // reproduce
-                        runningPopulation++;
+                        runningPopulation++; // keep track of the total number of organisms created
                         population[organismCounter].setEnergyStore(population[organismCounter].getEnergyStore() - 3);
-                        //cout<<"Organism "<<organismCounter<<" reproduced!\n";
+                        population[organismCounter].incrementNumberOffspring();
                         population[populationLevel].setStatusAlive(true);
                         population[populationLevel].setIterationBorn(iterationCounter);
+                        population[populationLevel].setIterationDied(maxIterations);
                         population[populationLevel].setDNA("ACGTCGAATCTAGGGA\n");
                         population[populationLevel].setGenerationNumber(population[organismCounter].getGenerationNumber()+ 1);
                         population[populationLevel].setParentOrganism(organismCounter);
-                        population[populationLevel].setEnergyCapacity(8);
-                        population[populationLevel].setEnergyStore(4);
-                        population[populationLevel].setBiteSize(2);
                         populationLevel++;
                     }
-                }
-                else
-                {
-                    //cout<<"Maximum population reached!\n";
                 }
             }
 
         }
+
+        /*Track the population at each iteration to show population growth and decline over time(iteration)*/
         populationVsIteration[iterationCounter] = runningPopulation;
         iterationCounter++;
     }
 
-    populationRecord<<"Organism, Iteration Born, Generation, Parent Organism, Alive at End\n";
+    /*Keep a record of each organism's meta data throughout the case study*/
+    populationRecord<<"Organism, Iteration Born, Iteration Died, Life Span, Generation, Parent Organism, Number of Offspring, Alive at End\n";
     for(i = 0; i < populationLevel; i++)
     {
         if(population[i].getStatusAlive())
         {
             livingCount++;
         }
-        populationRecord<<i<<","<<population[i].getIterationBorn()<<","<<population[i].getGenerationNumber()<<","<<population[i].getParentOrganism()<<","<<population[i].getStatusAlive()<<"\n";
+        populationRecord<<i<<","<<population[i].getIterationBorn()<<","<<population[i].getIterationDied()<<","<<population[i].getLifeSpan()<<","<<population[i].getGenerationNumber()<<","<<population[i].getParentOrganism()<<","<<population[i].getNumberOffspring()<<","<<population[i].getStatusAlive()<<"\n";
     }
     std::cout<<"Living: "<<livingCount;
 
+    /*Keep a record of the population throughout each iteration for this case study*/
     populationHistory<<"Iteration, Population\n";
     for(i = 0; i < maxIterations; i++)
     {
