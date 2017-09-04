@@ -1,8 +1,12 @@
 # depslib dependency file v1.0
-1504475483 source:c:\users\michael\documents\c++\cambrianexplosion\main.cpp
+1504488865 source:c:\users\michael\documents\c++\cambrianexplosion\main.cpp
 	<iostream>
 	<string>
 	<cstdlib>
 	<ctime>
 	<fstream>
+	"Organism.h"
+
+1504488890 c:\users\michael\documents\c++\cambrianexplosion\organism.h
+	<string>
 
