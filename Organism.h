@@ -1,12 +1,15 @@
 #ifndef ORGANISM_H_INCLUDED
 #define ORGANISM_H_INCLUDED
 #include <string>
+#include <cstdlib>
+#include <ctime>
 
 /**<Organism is a class that tracks internal parameters for energy as well as meta data created throughout it's life cycle*/
 class Organism
 {
 private:
     std::string organismDNA;/**< Unique code for organism that is shared with offspring (but may mutate) */
+    int DNAlength;
     bool statusAlive;       /**< Track whether organism is alive or not */
     int energyStore;        /**< Place for storing building blocks for survival and reproduction */
     int energyCapacity;     /**< The total amount of energy that can be contained in an organism */
@@ -19,13 +22,14 @@ private:
     int iterationDied;      /**< Iteration that this organism died */
     int lifeSpan;           /**< Total number of iterations survived by this organism */
     int numberOffspring;    /**< Number of offspring produced by this organism */
+    bool statusMutation;
 
 public:
-    Organism(std::string dna="XXXXXXXXXXXXXXXX", bool status=false, int stored=4, int capacity=8, int waste=0, int metaRate=1,
-             int bSize=2, int gNumber=1, int parent=0, int born=0, int died=0, int span=0,int brood=0):
-        organismDNA(dna), statusAlive(status), energyStore(stored), energyCapacity(capacity), energyWaste(waste), metabolicRate(metaRate),
+    Organism(std::string dna="XXXXXXXXXXXXXXXX",int length=16, bool status=false, int stored=4, int capacity=8, int waste=0, int metaRate=1,
+             int bSize=2, int gNumber=1, int parent=0, int born=0, int died=0, int span=0,int brood=0, bool mutation=false):
+        organismDNA(dna), DNAlength(length), statusAlive(status), energyStore(stored), energyCapacity(capacity), energyWaste(waste), metabolicRate(metaRate),
         biteSize(bSize), generationNumber(gNumber), parentOrganism(parent), iterationBorn(born), iterationDied(died),
-        lifeSpan(span), numberOffspring(brood)
+        lifeSpan(span), numberOffspring(brood), statusMutation(mutation)
     {
 
     }
@@ -37,6 +41,7 @@ public:
     int Bite(int);                  /**< Organism takes a bite of energy out of the environment */
     void Move();                    /**< Move from location if unable to find resources (energy or materials) */
     void setDNA(std::string);
+    std::string getDNA();
     void setEnergyStore(int);
     int getEnergyStore();
     void setEnergyCapacity(int);
@@ -46,6 +51,7 @@ public:
     int getGenerationNumber();
     void setStatusAlive(bool);
     bool getStatusAlive();
+    bool getStatusMutation();
     void setParentOrganism(int);
     int getParentOrganism();
     void setIterationBorn(int);

@@ -90,6 +90,11 @@ bool Organism::getStatusAlive()
     return statusAlive;
 }
 
+bool Organism::getStatusMutation()
+{
+    return statusMutation;
+};
+
 int Organism::Bite(int availableEnergy)
 {
     if(availableEnergy >= biteSize)
@@ -107,7 +112,39 @@ int Organism::Bite(int availableEnergy)
 
 void Organism::setDNA(std::string dna)
 {
+    int iRand;
+    int slotRand;
+    int protRand;
+    iRand = rand() % 100;
+    if(iRand < 1)
+    {
+        DNAlength++;
+        dna[DNAlength-1] = 'A';
+    }
+    if(iRand < 5)
+    {
+        statusMutation = true;
+        slotRand = rand() %DNAlength;
+        protRand = rand() %4;
+        switch(protRand)
+        {
+            case 0: dna[slotRand] = 'A';
+                    break;
+            case 1: dna[slotRand] = 'C';
+                    break;
+            case 2: dna[slotRand] = 'G';
+                    break;
+            case 3: dna[slotRand] = 'T';
+                    break;
+            default: break;
+        }
+    }
     organismDNA = dna;
+};
+
+std::string Organism::getDNA()
+{
+    return organismDNA;
 };
 
 void Organism::Reproduce()

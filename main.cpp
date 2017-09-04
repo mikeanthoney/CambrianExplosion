@@ -13,21 +13,23 @@ int main()
     int iRandom;                    /**< Integer for holding randomized values */
     srand(time(0));                 /**< Seed variable for random death events */
     int iterationCounter = 0;       /**< The current iteration */
-    int maxIterations = 165;        /**< Limit number of iterations possible (to save resources) */
+    int maxIterations = 500;        /**< Limit number of iterations possible (to save resources) */
     int populationVsIteration[maxIterations]; /**< Track population at given iteration */
     int environmentEnergy = 500;    /**< Starting environment energy */
-    int externalEnergy = 50;        /**< Energy is introduced to environment by external source at a fix rate */
+    int externalEnergy = 500;        /**< Energy is introduced to environment by external source at a fix rate */
     int populationLevel = 1;        /**< Start with a single bacterium */
     int runningPopulation = 1;      /**< Total population during a given iteration */
-    int maxPopulation = 10000;      /**< Limit the total number of bacteria that can be created (for memory purposes) */
+    int maxPopulation = 25000;      /**< Limit the total number of bacteria that can be created (for memory purposes) */
     std::ofstream populationHistory;     /**< Record population during each iteration */
     std::ofstream populationRecord;      /**< Record meta data for every organism created */
+    std::ofstream mutationRecord;
     populationHistory.open ("history.csv");
     populationRecord.open ("record.csv");
+    mutationRecord.open ("mutation.csv");
     Organism bacteria[maxPopulation];
     std::cout << "Welcome to the Cambrian world!\n";
     bacteria[0].setStatusAlive(true);           /**< First organism is born */
-    bacteria[0].setDNA("ACGTCGAATCTAGGGA\n");   /**< Organism is assigned a fixed DNA code */
+    bacteria[0].setDNA("ACGTCGAATCTAGGGA");   /**< Organism is assigned a fixed DNA code */
     std::cout<<environmentEnergy<<"\n";
 
     while(iterationCounter < maxIterations)
@@ -88,7 +90,7 @@ int main()
                         bacteria[populationLevel].setStatusAlive(true);
                         bacteria[populationLevel].setIterationBorn(iterationCounter);
                         bacteria[populationLevel].setIterationDied(maxIterations);
-                        bacteria[populationLevel].setDNA("ACGTCGAATCTAGGGA\n");
+                        bacteria[populationLevel].setDNA(bacteria[organismCounter].getDNA());
                         bacteria[populationLevel].setGenerationNumber(bacteria[organismCounter].getGenerationNumber()+ 1); // Relative distance from Original Ancestor
                         bacteria[populationLevel].setParentOrganism(organismCounter);
                         populationLevel++;
@@ -104,14 +106,14 @@ int main()
     }
 
     /*Keep a record of each organism's meta data throughout the case study*/
-    populationRecord<<"Bacterium, Iteration Born, Iteration Died, Life Span, Generation, Parent Bacterium, Number of Offspring, Alive at End\n";
+    populationRecord<<"Bacterium, DNA, Iteration Born, Iteration Died, Life Span, Generation, Parent Bacterium, Number of Offspring, Alive at End\n";
     for(i = 0; i < populationLevel; i++)
     {
         if(bacteria[i].getStatusAlive())
         {
             livingCount++;
         }
-        populationRecord<<i<<","<<bacteria[i].getIterationBorn()<<","<<bacteria[i].getIterationDied()<<","<<bacteria[i].getLifeSpan()<<","<<bacteria[i].getGenerationNumber()<<","<<bacteria[i].getParentOrganism()<<","<<bacteria[i].getNumberOffspring()<<","<<bacteria[i].getStatusAlive()<<"\n";
+        populationRecord<<i<<","<<bacteria[i].getDNA()<<","<<bacteria[i].getIterationBorn()<<","<<bacteria[i].getIterationDied()<<","<<bacteria[i].getLifeSpan()<<","<<bacteria[i].getGenerationNumber()<<","<<bacteria[i].getParentOrganism()<<","<<bacteria[i].getNumberOffspring()<<","<<bacteria[i].getStatusAlive()<<"\n";
     }
     std::cout<<"Living: "<<livingCount;
 
@@ -120,6 +122,16 @@ int main()
     for(i = 0; i < maxIterations; i++)
     {
         populationHistory<<i<<","<<populationVsIteration[i]<<"\n";
+    }
+
+    /*Keep a record of mutations throughout the case study*/
+    mutationRecord<<"Bacterium, DNA, Generation, Parent\n";
+    for(i = 0; i < populationLevel; i++)
+    {
+        if(bacteria[i].getStatusMutation())
+           {
+               mutationRecord<<i<<","<<bacteria[i].getDNA()<<","<<bacteria[i].getGenerationNumber()<<","<<bacteria[i].getParentOrganism()<<"\n";
+           }
     }
 
     return 0;
