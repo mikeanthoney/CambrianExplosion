@@ -22,7 +22,7 @@ int main()
     int environmentEnergy = 500;    /**< Starting environment energy */
     int externalEnergy = 500;       /**< Energy is introduced to environment by external source at a fix rate */
     int organismID = 0;             /**< Start with a single bacterium */
-    int maxPopulation = 1000;       /**< Limit the total number of bacteria that can be created (for memory purposes) */
+    int maxPopulation = 10000;       /**< Limit the total number of bacteria that can be created (for memory purposes) */
     std::ofstream populationHistory;     /**< Record population during each iteration */
     std::ofstream populationRecord;      /**< Record meta data for every organism created */
 
