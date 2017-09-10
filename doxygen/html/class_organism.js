@@ -1,8 +1,9 @@
 var class_organism =
 [
-    [ "Organism", "class_organism.html#a78c9aa14b06191992b4d025bb680479d", null ],
+    [ "Organism", "class_organism.html#a9a87ad11ccbd0096963d7d59294b1ff1", null ],
     [ "Bite", "class_organism.html#aae29c3650fc9a59d1bbf8ef30f75bea5", null ],
     [ "Excrete", "class_organism.html#a67d078884d3afc81880c447b46583f84", null ],
+    [ "getDNA", "class_organism.html#a7fd3e7f21c57834184c60e8462f20855", null ],
     [ "getEnergyCapacity", "class_organism.html#a26e78ee646d3dfb5293d67a37538e2fd", null ],
     [ "getEnergyStore", "class_organism.html#a0a5079506b2360951f430db251c59d52", null ],
     [ "getGenerationNumber", "class_organism.html#a88b480d56dc4547f0c6b49a3e2d96810", null ],
@@ -12,6 +13,7 @@ var class_organism =
     [ "getNumberOffspring", "class_organism.html#a7b6cea3c1a93fb711058ab94c0c6d2d8", null ],
     [ "getParentOrganism", "class_organism.html#ad6d3b768d1392ced5f03373a98067093", null ],
     [ "getStatusAlive", "class_organism.html#aec93f64feeb8cad48c5b9ddac7f0f79b", null ],
+    [ "getStatusMutation", "class_organism.html#ae2cc0bb444a07468e8785d9ad6f3fccf", null ],
     [ "incrementNumberOffspring", "class_organism.html#a20bde1bbc0b98bc40fc750bf813aabf5", null ],
     [ "Metabolize", "class_organism.html#a58b91c116787c27023f3240d05f7287f", null ],
     [ "Move", "class_organism.html#ab73521f1e3a68d8fbb6ba45bf84f221c", null ],

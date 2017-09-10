@@ -86,12 +86,14 @@ $(document).ready(function(){initNavTree('class_organism.html','');});
 <div class="title">Organism Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="_organism_8h_source.html">Organism.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a78c9aa14b06191992b4d025bb680479d"><td class="memItemLeft" align="right" valign="top"><a id="a78c9aa14b06191992b4d025bb680479d"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Organism</b> (std::string dna=&quot;XXXXXXXXXXXXXXXX&quot;, bool status=false, int stored=4, int capacity=8, int waste=0, int metaRate=1, int bSize=2, int gNumber=1, int parent=0, int born=0, int died=0, int span=0, int brood=0)</td></tr>
-<tr class="separator:a78c9aa14b06191992b4d025bb680479d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a87ad11ccbd0096963d7d59294b1ff1"><td class="memItemLeft" align="right" valign="top"><a id="a9a87ad11ccbd0096963d7d59294b1ff1"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Organism</b> (std::string dna=&quot;XXXXXXXXXXXXXXXX&quot;, int length=16, bool status=false, int stored=4, int capacity=8, int waste=0, int metaRate=1, int bSize=2, int gNumber=1, int parent=0, int born=0, int died=0, int span=0, int brood=0, bool mutation=false)</td></tr>
+<tr class="separator:a9a87ad11ccbd0096963d7d59294b1ff1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a397b055c142d946a26d72b5a5a2faea1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_organism.html#a397b055c142d946a26d72b5a5a2faea1">Reproduce</a> ()</td></tr>
 <tr class="separator:a397b055c142d946a26d72b5a5a2faea1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a67d078884d3afc81880c447b46583f84"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_organism.html#a67d078884d3afc81880c447b46583f84">Excrete</a> ()</td></tr>
@@ -107,6 +109,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3a35de5022cbd8d8f06f2474288b643c"><td class="memItemLeft" align="right" valign="top"><a id="a3a35de5022cbd8d8f06f2474288b643c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setDNA</b> (std::string)</td></tr>
 <tr class="separator:a3a35de5022cbd8d8f06f2474288b643c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7fd3e7f21c57834184c60e8462f20855"><td class="memItemLeft" align="right" valign="top"><a id="a7fd3e7f21c57834184c60e8462f20855"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><b>getDNA</b> ()</td></tr>
+<tr class="separator:a7fd3e7f21c57834184c60e8462f20855"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a782cd7d636e97d0b79d451d89ebdb0c1"><td class="memItemLeft" align="right" valign="top"><a id="a782cd7d636e97d0b79d451d89ebdb0c1"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setEnergyStore</b> (int)</td></tr>
 <tr class="separator:a782cd7d636e97d0b79d451d89ebdb0c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -134,6 +139,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>setStatusAlive</b> (b
 <tr class="memitem:aec93f64feeb8cad48c5b9ddac7f0f79b"><td class="memItemLeft" align="right" valign="top"><a id="aec93f64feeb8cad48c5b9ddac7f0f79b"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>getStatusAlive</b> ()</td></tr>
 <tr class="separator:aec93f64feeb8cad48c5b9ddac7f0f79b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2cc0bb444a07468e8785d9ad6f3fccf"><td class="memItemLeft" align="right" valign="top"><a id="ae2cc0bb444a07468e8785d9ad6f3fccf"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>getStatusMutation</b> ()</td></tr>
+<tr class="separator:ae2cc0bb444a07468e8785d9ad6f3fccf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac06f2650992722b08a8a181eddaa6e32"><td class="memItemLeft" align="right" valign="top"><a id="ac06f2650992722b08a8a181eddaa6e32"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setParentOrganism</b> (int)</td></tr>
 <tr class="separator:ac06f2650992722b08a8a181eddaa6e32"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -274,8 +282,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>getNumberOffspring</b>
 
 </div>
 </div>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>main.cpp</li>
+<hr/>The documentation for this class was generated from the following files:<ul>
+<li><a class="el" href="_organism_8h_source.html">Organism.h</a></li>
+<li>Organism.cpp</li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
@@ -283,7 +292,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>getNumberOffspring</b>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_organism.html">Organism</a></li>
-    <li class="footer">Generated on Sun Sep 3 2017 19:17:43 for CambrianExplosion by
+    <li class="footer">Generated on Sun Sep 3 2017 21:44:04 for CambrianExplosion by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.13 </li>
   </ul>

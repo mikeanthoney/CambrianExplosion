@@ -6,66 +6,79 @@
 #include <ctime>
 #include <fstream>
 #include "Organism.h"
+#include <vector>
 
 int main()
 {
-    int organismCounter,livingCount = 0, i;
+    int organismCounter;
+    int livingCount = 0;
+    int i;
+    int iterationPopulationSize = 1;
     int iRandom;                    /**< Integer for holding randomized values */
     srand(time(0));                 /**< Seed variable for random death events */
     int iterationCounter = 0;       /**< The current iteration */
-    int maxIterations = 500;        /**< Limit number of iterations possible (to save resources) */
+    int maxIterations = 100;        /**< Limit number of iterations possible (to save resources) */
     int populationVsIteration[maxIterations]; /**< Track population at given iteration */
     int environmentEnergy = 500;    /**< Starting environment energy */
-    int externalEnergy = 500;        /**< Energy is introduced to environment by external source at a fix rate */
-    int populationLevel = 1;        /**< Start with a single bacterium */
-    int runningPopulation = 1;      /**< Total population during a given iteration */
-    int maxPopulation = 25000;      /**< Limit the total number of bacteria that can be created (for memory purposes) */
+    int externalEnergy = 500;       /**< Energy is introduced to environment by external source at a fix rate */
+    int organismID = 0;             /**< Start with a single bacterium */
+    int maxPopulation = 1000;       /**< Limit the total number of bacteria that can be created (for memory purposes) */
     std::ofstream populationHistory;     /**< Record population during each iteration */
     std::ofstream populationRecord;      /**< Record meta data for every organism created */
-    std::ofstream mutationRecord;
+
+    /*Keep a record of the population throughout each iteration for this case study*/
     populationHistory.open ("history.csv");
+    populationHistory<<"Iteration, Population\n";
+
+    /*Keep a record of each organism's meta data throughout the case study*/
     populationRecord.open ("record.csv");
-    mutationRecord.open ("mutation.csv");
-    Organism bacteria[maxPopulation];
+    populationRecord<<"Bacterium, DNA, Iteration Born, Iteration Died, Life Span, Generation, Parent Bacterium, Number of Offspring, Alive at End\n"; // Header for data
+
+//    Organism vectorOfBacteria[maxPopulation];
+    std::vector<Organism> vectorOfBacteria(1); //start with a single bacteria
+    Organism bacteria;
     std::cout << "Welcome to the Cambrian world!\n";
-    bacteria[0].setStatusAlive(true);           /**< First organism is born */
-    bacteria[0].setDNA("ACGTCGAATCTAGGGA");   /**< Organism is assigned a fixed DNA code */
+    vectorOfBacteria[0].setIdNumber(organismID);
+    vectorOfBacteria[0].setStatusAlive(true);           /**< First organism is born */
+    vectorOfBacteria[0].setDNA("ACGTCGAATCTAGGGA");   /**< Organism is assigned a fixed DNA code */
     std::cout<<environmentEnergy<<"\n";
 
     while(iterationCounter < maxIterations)
     {
         environmentEnergy += externalEnergy;
-        for(organismCounter = 0; organismCounter < populationLevel; organismCounter++)
+
+        iterationPopulationSize = vectorOfBacteria.size();
+
+        /*ORGANISM ACTION PHASES*/
+        for(organismCounter = 0; organismCounter < iterationPopulationSize; organismCounter++)
         {
             /*RANDOM DEATH PHASE*/
             /*If the organism is killed during the Random Death Phase, skip the Life Cycle Phase*/
-            if(bacteria[organismCounter].getStatusAlive())
+            if(vectorOfBacteria[organismCounter].getStatusAlive())
             {
 
                 iRandom = rand() % 100;
                 if(iRandom < 10)
                 {
-                    bacteria[organismCounter].setStatusAlive(false); //organism died due to random event
-                    bacteria[organismCounter].setIterationDied(iterationCounter);
-                    runningPopulation--;
+                    vectorOfBacteria[organismCounter].setStatusAlive(false); //organism died due to random event
+                    vectorOfBacteria[organismCounter].setIterationDied(iterationCounter);
                 }
             }
 
             /*LIFE CYCLE PHASE*/
             /*If the organism in the population array is not alive, skip the Life Cycle Phase*/
-            if(bacteria[organismCounter].getStatusAlive())
+            if(vectorOfBacteria[organismCounter].getStatusAlive())
             {
                 /*METABOLISM PHASE*/
                 /*The organism will first metabolize energy to search for food and mates*/
-                bacteria[organismCounter].Metabolize();
+                vectorOfBacteria[organismCounter].Metabolize();
 
                 /*If organisms energy store has reaches zero during the metabolism phase, it dies*/
-                if(bacteria[organismCounter].getEnergyStore() == 0)
+                if(vectorOfBacteria[organismCounter].getEnergyStore() == 0)
                 {
-                        bacteria[organismCounter].setStatusAlive(false); // organism starved to death
-                        bacteria[organismCounter].setIterationDied(iterationCounter);
-                        runningPopulation--;
-                        environmentEnergy = environmentEnergy + 5; // organism's body becomes energy
+                    vectorOfBacteria[organismCounter].setStatusAlive(false); // organism starved to death
+                    vectorOfBacteria[organismCounter].setIterationDied(iterationCounter);
+                    environmentEnergy = environmentEnergy + 5; // organism's body becomes energy
                 }
 
                 /*CONSUMPTION PHASE*/
@@ -73,65 +86,73 @@ int main()
                 if (environmentEnergy > 0)
                 {
                     /*Two separate sub-phases. (1) Consume energy form environment (2) Return unabsorbed energy to environment*/
-                    environmentEnergy = environmentEnergy - bacteria[organismCounter].Bite(environmentEnergy);
-                    environmentEnergy = environmentEnergy + bacteria[organismCounter].Excrete();
+                    environmentEnergy = environmentEnergy - vectorOfBacteria[organismCounter].Bite(environmentEnergy);
+                    environmentEnergy = environmentEnergy + vectorOfBacteria[organismCounter].Excrete();
                 }
 
                 /*REPRODUCTION PHASE*/
                 /*If population limit has been reached - skip reproduction phase (not possible to reproduce)*/
-                if (populationLevel < maxPopulation)
+                if (int(vectorOfBacteria.size()) < maxPopulation)
                 {
                     /*If organism has enough energy, the organism reproduces*/
-                    if(bacteria[organismCounter].getEnergyStore() == bacteria[organismCounter].getEnergyCapacity())
+                    if(vectorOfBacteria[organismCounter].getEnergyStore() == vectorOfBacteria[organismCounter].getEnergyCapacity())
                     {
-                        runningPopulation++; // keep track of the total number of organisms created
-                        bacteria[organismCounter].setEnergyStore(bacteria[organismCounter].getEnergyStore() - 3);
-                        bacteria[organismCounter].incrementNumberOffspring();
-                        bacteria[populationLevel].setStatusAlive(true);
-                        bacteria[populationLevel].setIterationBorn(iterationCounter);
-                        bacteria[populationLevel].setIterationDied(maxIterations);
-                        bacteria[populationLevel].setDNA(bacteria[organismCounter].getDNA());
-                        bacteria[populationLevel].setGenerationNumber(bacteria[organismCounter].getGenerationNumber()+ 1); // Relative distance from Original Ancestor
-                        bacteria[populationLevel].setParentOrganism(organismCounter);
-                        populationLevel++;
+                        organismID++;
+                        vectorOfBacteria[organismCounter].setEnergyStore(vectorOfBacteria[organismCounter].getEnergyStore() - 3);
+                        vectorOfBacteria[organismCounter].incrementNumberOffspring();
+                        vectorOfBacteria.push_back(Organism()); // increase population of bacteria by one
+
+                        // set parameters of new offspring
+                        vectorOfBacteria[vectorOfBacteria.size() - 1].setIdNumber(organismID);
+                        vectorOfBacteria[vectorOfBacteria.size() - 1].setDNA(vectorOfBacteria[organismCounter].getDNA());
+                        vectorOfBacteria[vectorOfBacteria.size() - 1].setStatusAlive(true);
+                        vectorOfBacteria[vectorOfBacteria.size() - 1].setIterationBorn(iterationCounter);
+                        vectorOfBacteria[vectorOfBacteria.size() - 1].setIterationDied(maxIterations);
+                        vectorOfBacteria[vectorOfBacteria.size() - 1].setGenerationNumber(vectorOfBacteria[organismCounter].getGenerationNumber()+ 1); // Relative distance from Original Ancestor
+                        vectorOfBacteria[vectorOfBacteria.size() - 1].setParentOrganism(vectorOfBacteria[organismCounter].getIdNumber());
                     }
+                }
+            }
+            else
+            {
+               // vectorOfBacteria.erase(vectorOfBacteria.begin() + organismCounter);
+                //organismCounter--;
+            }
+
+            if(vectorOfBacteria[organismCounter].getStatusAlive() == 0)
+            {
+                if(vectorOfBacteria.size() > 1)
+                {
+                    populationRecord<<vectorOfBacteria[organismCounter].getIdNumber()<<","<<vectorOfBacteria[organismCounter].getDNA()<<","<<vectorOfBacteria[organismCounter].getIterationBorn()<<","<<vectorOfBacteria[organismCounter].getIterationDied()<<","<<vectorOfBacteria[organismCounter].getLifeSpan()<<","<<vectorOfBacteria[organismCounter].getGenerationNumber()<<","<<vectorOfBacteria[organismCounter].getParentOrganism()<<","<<vectorOfBacteria[organismCounter].getNumberOffspring()<<","<<vectorOfBacteria[organismCounter].getStatusAlive()<<"\n";
+                    vectorOfBacteria.erase(vectorOfBacteria.begin() + organismCounter);
+                    organismCounter--;
+                    iterationPopulationSize--;
                 }
             }
 
         }
 
         /*Track the population at each iteration to show population growth and decline over time(iteration)*/
-        populationVsIteration[iterationCounter] = runningPopulation;
+        populationVsIteration[iterationCounter] = int(vectorOfBacteria.size());
         iterationCounter++;
     }
 
-    /*Keep a record of each organism's meta data throughout the case study*/
-    populationRecord<<"Bacterium, DNA, Iteration Born, Iteration Died, Life Span, Generation, Parent Bacterium, Number of Offspring, Alive at End\n";
-    for(i = 0; i < populationLevel; i++)
+
+    for(i = 0; i < int(vectorOfBacteria.size()); i++)
     {
-        if(bacteria[i].getStatusAlive())
+        if(vectorOfBacteria[i].getStatusAlive())
         {
             livingCount++;
         }
-        populationRecord<<i<<","<<bacteria[i].getDNA()<<","<<bacteria[i].getIterationBorn()<<","<<bacteria[i].getIterationDied()<<","<<bacteria[i].getLifeSpan()<<","<<bacteria[i].getGenerationNumber()<<","<<bacteria[i].getParentOrganism()<<","<<bacteria[i].getNumberOffspring()<<","<<bacteria[i].getStatusAlive()<<"\n";
+        populationRecord<<vectorOfBacteria[i].getIdNumber()<<","<<vectorOfBacteria[i].getDNA()<<","<<vectorOfBacteria[i].getIterationBorn()<<","<<vectorOfBacteria[i].getIterationDied()<<","<<vectorOfBacteria[i].getLifeSpan()<<","<<vectorOfBacteria[i].getGenerationNumber()<<","<<vectorOfBacteria[i].getParentOrganism()<<","<<vectorOfBacteria[i].getNumberOffspring()<<","<<vectorOfBacteria[i].getStatusAlive()<<"\n";
     }
     std::cout<<"Living: "<<livingCount;
 
-    /*Keep a record of the population throughout each iteration for this case study*/
-    populationHistory<<"Iteration, Population\n";
-    for(i = 0; i < maxIterations; i++)
+    std::cout<<"maxIterations "<<maxIterations<<" , populationVsIteration Array "<<sizeof(populationVsIteration)/sizeof(populationVsIteration[0])<<"\n";
+    // Write to History File
+    for(i = 0; i < (maxIterations - 1); i++)
     {
         populationHistory<<i<<","<<populationVsIteration[i]<<"\n";
-    }
-
-    /*Keep a record of mutations throughout the case study*/
-    mutationRecord<<"Bacterium, DNA, Generation, Parent\n";
-    for(i = 0; i < populationLevel; i++)
-    {
-        if(bacteria[i].getStatusMutation())
-           {
-               mutationRecord<<i<<","<<bacteria[i].getDNA()<<","<<bacteria[i].getGenerationNumber()<<","<<bacteria[i].getParentOrganism()<<"\n";
-           }
     }
 
     return 0;

@@ -8,7 +8,8 @@
 class Organism
 {
 private:
-    std::string organismDNA;/**< Unique code for organism that is shared with offspring (but may mutate) */
+    int idNumber;           /**< Unique ID number for tracking organism */
+    std::string organismDNA;/**< Genetic code for organism that is shared with offspring (but may mutate) */
     int DNAlength;
     bool statusAlive;       /**< Track whether organism is alive or not */
     int energyStore;        /**< Place for storing building blocks for survival and reproduction */
@@ -25,14 +26,12 @@ private:
     bool statusMutation;
 
 public:
-    Organism(std::string dna="XXXXXXXXXXXXXXXX",int length=16, bool status=false, int stored=4, int capacity=8, int waste=0, int metaRate=1,
+    Organism(int id = 0, std::string dna="XXXXXXXXXXXXXXXX",int length=16, bool status=false, int stored=4, int capacity=8, int waste=0, int metaRate=1,
              int bSize=2, int gNumber=1, int parent=0, int born=0, int died=0, int span=0,int brood=0, bool mutation=false):
-        organismDNA(dna), DNAlength(length), statusAlive(status), energyStore(stored), energyCapacity(capacity), energyWaste(waste), metabolicRate(metaRate),
+        idNumber(id), organismDNA(dna), DNAlength(length), statusAlive(status), energyStore(stored), energyCapacity(capacity), energyWaste(waste), metabolicRate(metaRate),
         biteSize(bSize), generationNumber(gNumber), parentOrganism(parent), iterationBorn(born), iterationDied(died),
         lifeSpan(span), numberOffspring(brood), statusMutation(mutation)
-    {
-
-    }
+    {}
 
     void Reproduce();               /**< Make copies of itself every time it has sufficient resources */
     int Excrete();                  /**< Organism expels unabsorbed energy back into the environment */
@@ -61,6 +60,8 @@ public:
     int getLifeSpan();
     void incrementNumberOffspring();
     int getNumberOffspring();
+    void setIdNumber(int);
+    int getIdNumber();
 
 protected:
 

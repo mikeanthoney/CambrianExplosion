@@ -1,5 +1,15 @@
 #include "Organism.h"
 
+void Organism::setIdNumber(int id)
+{
+    idNumber = id;
+};
+
+int Organism::getIdNumber()
+{
+    return idNumber;
+};
+
 void Organism::incrementNumberOffspring()
 {
     numberOffspring++;
